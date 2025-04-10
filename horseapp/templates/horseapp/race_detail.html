@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="description"
+      content="Details of race #{{ race_id }} for the year {{ year }}."
+    />
+    <meta
+      name="keywords"
+      content="horse racing, race details, jockeys, trainers, horses"
+    />
+    <title>Race #{{ race_id }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+      th {
+        background-color: #f9f9f9;
+      }
+      img.silk {
+        width: 40px;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Race #{{ race_id }} – {{ year }}</h1>
+    <a
+      href="{% url 'index' %}"
+      onclick="event.preventDefault(); window.history.back();"
+      >← Back</a
+    >
+
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Silks</th>
+          <th>Horse</th>
+          <th>Age</th>
+          <th>Jockey</th>
+          <th>Trainer</th>
+          <th>Weight</th>
+          <th>Headgear</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in runners %}
+        <tr>
+          <td>{{ r.clothNumber }}</td>
+          <td>
+            <img
+              class="silk"
+              src="{{ r.silkImage }}"
+              alt="Silks"
+              width="40"
+              height="auto"
+            />
+          </td>
+          <td>{{ r.racehorseName }}</td>
+          <td>{{ r.ageYears }}</td>
+          <td>{{ r.jockeyName }}</td>
+          <td>{{ r.trainerName }}</td>
+          <td>{{ r.weightText }}</td>
+          <td>{{ r.headGearDescription|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

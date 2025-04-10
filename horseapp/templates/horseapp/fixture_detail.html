@@ -49,7 +49,11 @@
         {% for race in races %}
         <tr>
           <td>{{ race.raceTime }}</td>
-          <td>{{ race.raceName }}</td>
+          <td>
+            <a href="{% url 'race_detail' year=year race_id=race.raceId %}">
+              {{ race.raceName }}
+            </a>
+          </td>
           <td>Class {{ race.raceClass }}</td>
           <td>£{{ race.prizeAmount|floatformat:0 }}</td>
           <td>{{ race.distanceText }}</td>

@@ -76,13 +76,11 @@ def find_fixture_reverse(course_id, fixture_date_str):
         first = requests.get(f"https://api09.horseracing.software/bha/v1/fixtures?courseId={course_id}", headers=headers)
         first.raise_for_status()
         total_pages = first.json().get("last_page", 1)
-        print("Total pages:", total_pages)
     except requests.RequestException as e:
         print("⚠️ Could not get total pages:", e)
         return None
 
     for page in range(total_pages, 0, -1):
-        print(page)
         try:
             url = f"https://api09.horseracing.software/bha/v1/fixtures?page={page}&courseId={course_id}"
             response = requests.get(url, headers=headers)
@@ -90,8 +88,6 @@ def find_fixture_reverse(course_id, fixture_date_str):
             fixtures = response.json().get("data", [])
 
             for fixture in fixtures:
-                print(fixture_date_str)
-                print(fixture["fixtureDate"])
                 if fixture["fixtureDate"] == fixture_date_str:
                     return fixture
         except requests.RequestException as e:
@@ -108,3 +104,25 @@ def racecourse_redirect_to_fixture(request, course_id, fixture_date):
         return redirect('fixture_detail', year=year, fixture_id=fixture_id)
     else:
         return HttpResponse("No matching fixture found.", status=404)
+    
+def race_detail(request, year, race_id):
+    url = f"https://api09.horseracing.software/bha/v1/races/{year}/{race_id}/0/entries"
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer 1|LuWZoUL0sMuGBvKboxSGTmYbhiZ9LwSpzBKP8mCQ',
+        'Origin': 'https://www.britishhorseracing.com',
+        'User-Agent': 'Mozilla/5.0',
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        runners = response.json().get("data", [])
+    except requests.RequestException as e:
+        print(f"Error fetching race detail: {e}")
+        return HttpResponse("Unable to fetch race details.", status=500)
+
+    return render(request, "horseapp/race_detail.html", {
+        "runners": runners,
+        "race_id": race_id,
+        "year": year
+    })
