@@ -47,13 +47,11 @@
         {% for course in races.data %}
         <tr>
           <td>
-            {% with course.nextFixtureDate|slice:":4" as year %}
             <a
-              href="{% url 'fixture_detail' year=year fixture_id=course.courseId %}"
+              href="{% url 'racecourse_redirect' course.courseId course.nextFixtureDate %}"
             >
               {{ course.name }}
             </a>
-            {% endwith %}
           </td>
           <td>{{ course.type }}</td>
           <td>{{ course.trackHandedness }}</td>

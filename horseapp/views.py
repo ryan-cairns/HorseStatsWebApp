@@ -1,6 +1,7 @@
+from django.http import HttpResponse
 import requests
 import datetime
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 
 def index(request):
@@ -61,3 +62,49 @@ def fixture_detail(request, year, fixture_id):
         'fixture_id': fixture_id,
         'year': year
     })
+
+
+def find_fixture_reverse(course_id, fixture_date_str):
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer 1|LuWZoUL0sMuGBvKboxSGTmYbhiZ9LwSpzBKP8mCQ',
+        'Origin': 'https://www.britishhorseracing.com',
+        'User-Agent': 'Mozilla/5.0',
+    }
+    print(course_id)
+    try:
+        first = requests.get(f"https://api09.horseracing.software/bha/v1/fixtures?courseId={course_id}", headers=headers)
+        first.raise_for_status()
+        total_pages = first.json().get("last_page", 1)
+        print("Total pages:", total_pages)
+    except requests.RequestException as e:
+        print("⚠️ Could not get total pages:", e)
+        return None
+
+    for page in range(total_pages, 0, -1):
+        print(page)
+        try:
+            url = f"https://api09.horseracing.software/bha/v1/fixtures?page={page}&courseId={course_id}"
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            fixtures = response.json().get("data", [])
+
+            for fixture in fixtures:
+                print(fixture_date_str)
+                print(fixture["fixtureDate"])
+                if fixture["fixtureDate"] == fixture_date_str:
+                    return fixture
+        except requests.RequestException as e:
+            print(f"Error on page {page}:", e)
+
+    return None
+
+def racecourse_redirect_to_fixture(request, course_id, fixture_date):
+    fixture = find_fixture_reverse(course_id, fixture_date)
+    
+    if fixture:
+        year = fixture["fixtureDate"][:4]
+        fixture_id = fixture["fixtureId"]
+        return redirect('fixture_detail', year=year, fixture_id=fixture_id)
+    else:
+        return HttpResponse("No matching fixture found.", status=404)
