@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="description"
+      content="Explore racecourses, their types, tracks, regions, and upcoming fixtures."
+    />
+    <meta
+      name="keywords"
+      content="racecourses, horse racing, tracks, fixtures, regions"
+    />
+    <title>Racecourses</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f5f5f5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Racecourses</h1>
+
+    {% if races.data %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Track</th>
+          <th>Region</th>
+          <th>Next Fixture</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for course in races.data %}
+        <tr>
+          <td>
+            {% with course.nextFixtureDate|slice:":4" as year %}
+            <a
+              href="{% url 'fixture_detail' year=year fixture_id=course.courseId %}"
+            >
+              {{ course.name }}
+            </a>
+            {% endwith %}
+          </td>
+          <td>{{ course.type }}</td>
+          <td>{{ course.trackHandedness }}</td>
+          <td>{{ course.region }}</td>
+          <td>{{ course.nextFixtureDate }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No racecourses found.</p>
+    {% endif %}
+  </body>
+</html>
