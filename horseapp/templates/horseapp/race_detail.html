@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+  <meta
+    name="description"
+    content="Details of race #{{ race_id }} for the year {{ year }}."
+  />
+  <meta
+    name="keywords"
+    content="horse racing, race details, jockeys, trainers, horses"
+  />
   <head>
-    <meta
-      name="description"
-      content="Details of race #{{ race_id }} for the year {{ year }}."
-    />
-    <meta
-      name="keywords"
-      content="horse racing, race details, jockeys, trainers, horses"
-    />
     <title>Race #{{ race_id }}</title>
     <style>
       body {
@@ -24,13 +24,18 @@
       td {
         border: 1px solid #ddd;
         padding: 10px;
+        vertical-align: top;
       }
       th {
-        background-color: #f9f9f9;
+        background-color: #f2f2f2;
       }
       img.silk {
         width: 40px;
         height: auto;
+      }
+      .small-text {
+        font-size: 0.9em;
+        color: #666;
       }
     </style>
   </head>
@@ -38,7 +43,7 @@
     <h1>Race #{{ race_id }} – {{ year }}</h1>
     <a
       href="{% url 'index' %}"
-      onclick="event.preventDefault(); window.history.back();"
+      onclick="event.preventDefault(); history.back();"
       >← Back</a
     >
 
@@ -52,7 +57,6 @@
           <th>Jockey</th>
           <th>Trainer</th>
           <th>Weight</th>
-          <th>Headgear</th>
         </tr>
       </thead>
       <tbody>
@@ -68,12 +72,18 @@
               height="auto"
             />
           </td>
-          <td>{{ r.racehorseName }}</td>
+          <td>
+            <strong>{{ r.racehorseName }}</strong><br />
+            <span class="small-text">
+              Runs: {{ r.horse_stats.0.totalRuns }}, 
+              Wins: {{ r.horse_stats.0.totalWins }}, 
+              Places: {{ r.horse_stats.0.totalPlaces }}
+            </span>
+          </td>
           <td>{{ r.ageYears }}</td>
           <td>{{ r.jockeyName }}</td>
           <td>{{ r.trainerName }}</td>
           <td>{{ r.weightText }}</td>
-          <td>{{ r.headGearDescription|default:"—" }}</td>
         </tr>
         {% endfor %}
       </tbody>

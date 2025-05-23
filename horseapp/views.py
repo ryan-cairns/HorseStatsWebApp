@@ -121,8 +121,38 @@ def race_detail(request, year, race_id):
         print(f"Error fetching race detail: {e}")
         return HttpResponse("Unable to fetch race details.", status=500)
 
+    for r in runners:
+        r["horse_stats"] = get_horse_stats(r["animalId"])
+        print (r["horse_stats"])
+        
     return render(request, "horseapp/race_detail.html", {
         "runners": runners,
         "race_id": race_id,
         "year": year
     })
+
+def get_horse_stats(animal_id):
+    import requests
+    from collections import Counter
+
+    headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer 1|LuWZoUL0sMuGBvKboxSGTmYbhiZ9LwSpzBKP8mCQ',
+        'Origin': 'https://www.britishhorseracing.com',
+        'User-Agent': 'Mozilla/5.0',
+    }
+
+    url = f"https://api09.horseracing.software/bha/v1/racehorses/{animal_id}"
+    
+    try:
+        res = requests.get(url, headers=headers)
+        res.raise_for_status()
+        rawdata = res.json()
+        data = rawdata["data"]
+        runs = data["performanceDetails"]
+    except requests.RequestException as e:
+        print(f"Error fetching horse {animal_id} performance:", e)
+
+    print(runs)
+        
+    return runs
