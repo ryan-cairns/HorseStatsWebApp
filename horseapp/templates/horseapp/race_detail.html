@@ -61,31 +61,35 @@
       </thead>
       <tbody>
         {% for r in runners %}
-        <tr>
-          <td>{{ r.clothNumber }}</td>
-          <td>
-            <img
-              class="silk"
-              src="{{ r.silkImage }}"
-              alt="Silks"
-              width="40"
-              height="auto"
-            />
-          </td>
-          <td>
-            <strong>{{ r.racehorseName }}</strong><br />
-            <span class="small-text">
-              Runs: {{ r.horse_stats.0.totalRuns }}, 
-              Wins: {{ r.horse_stats.0.totalWins }}, 
-              Places: {{ r.horse_stats.0.totalPlaces }}
-            </span>
-          </td>
-          <td>{{ r.ageYears }}</td>
-          <td>{{ r.jockeyName }}</td>
-          <td>{{ r.trainerName }}</td>
-          <td>{{ r.weightText }}</td>
-        </tr>
-        {% endfor %}
+  <tr>
+    <td>{{ r.clothNumber }}</td>
+    <td>
+      <img
+        class="silk"
+        src="{{ r.silkImage }}"
+        alt="Silks"
+        width="40"
+        height="auto"
+      />
+    </td>
+    <td>
+      <strong>{{ r.racehorseName }}</strong><br />
+      <span class="small-text">
+        {# Check if horse_stats exists (and is a dictionary with expected keys) #}
+        {% if r.horse_stats %}
+          Runs: {{ r.horse_stats.totalRuns }}, Wins: {{ r.horse_stats.totalWins }}, Places: {{ r.horse_stats.totalPlaces }}<br />
+          Win%: {{ r.horse_stats.win_pct }}%, Place%: {{ r.horse_stats.place_pct }}%
+        {% else %}
+          Stats not available for this horse.
+        {% endif %}
+      </span>
+    </td>
+    <td>{{ r.ageYears }}</td>
+    <td>{{ r.jockeyName }}</td>
+    <td>{{ r.trainerName }}</td>
+    <td>{{ r.weightText }}</td>
+  </tr>
+{% endfor %}
       </tbody>
     </table>
   </body>
