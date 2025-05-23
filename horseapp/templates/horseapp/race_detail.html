@@ -1,41 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <meta
-    name="description"
-    content="Details of race #{{ race_id }} for the year {{ year }}."
-  />
-  <meta
-    name="keywords"
-    content="horse racing, race details, jockeys, trainers, horses"
-  />
   <head>
+    <meta
+      name="description"
+      content="Details of race #{{ race_id }} for the year {{ year }}."
+    />
+    <meta
+      name="keywords"
+      content="horse racing, race details, jockeys, trainers, horses"
+    />
     <title>{{ race_name }}</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 30px;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f4f7f6;
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 2.2em;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 10px;
+      }
+      a {
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      a:hover {
+        color: #2980b9;
+        text-decoration: underline;
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 8px 15px;
+        background-color: #5cb85c;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+      .back-link:hover {
+        background-color: #4cae4c;
+        text-decoration: none;
       }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
       }
       th,
       td {
-        border: 1px solid #ddd;
-        padding: 10px;
+        padding: 15px 20px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
         vertical-align: top;
       }
       th {
-        background-color: #f2f2f2;
+        background-color: #f0f3f6;
+        color: #555;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9em;
+      }
+      tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tbody tr:hover {
+        background-color: #eef7fc;
+        cursor: pointer;
       }
       img.silk {
         width: 40px;
         height: auto;
+        border-radius: 4px;
       }
       .small-text {
-        font-size: 0.9em;
+        font-size: 0.85em;
         color: #666;
+        line-height: 1.4;
+      }
+      p {
+        text-align: center;
+        color: #777;
+        margin-top: 30px;
+        font-size: 1.1em;
       }
     </style>
   </head>
@@ -44,6 +101,7 @@
     <a
       href="{% url 'index' %}"
       onclick="event.preventDefault(); history.back();"
+      class="back-link"
       >← Back</a
     >
 
@@ -61,35 +119,34 @@
       </thead>
       <tbody>
         {% for r in runners %}
-  <tr>
-    <td>{{ r.clothNumber }}</td>
-    <td>
-      <img
-        class="silk"
-        src="{{ r.silkImage }}"
-        alt="Silks"
-        width="40"
-        height="auto"
-      />
-    </td>
-    <td>
-      <strong>{{ r.racehorseName }}</strong><br />
-      <span class="small-text">
-        {# Check if horse_stats exists (and is a dictionary with expected keys) #}
-        {% if r.horse_stats %}
-          Runs: {{ r.horse_stats.totalRuns }}, Wins: {{ r.horse_stats.totalWins }}, Places: {{ r.horse_stats.totalPlaces }}<br />
-          Win%: {{ r.horse_stats.win_pct }}%, Place%: {{ r.horse_stats.place_pct }}%
-        {% else %}
-          Stats not available for this horse.
-        {% endif %}
-      </span>
-    </td>
-    <td>{{ r.ageYears }}</td>
-    <td>{{ r.jockeyName }}</td>
-    <td>{{ r.trainerName }}</td>
-    <td>{{ r.weightText }}</td>
-  </tr>
-{% endfor %}
+          <tr>
+            <td>{{ r.clothNumber }}</td>
+            <td>
+              <img
+                class="silk"
+                src="{{ r.silkImage }}"
+                alt="Silks"
+                width="40"
+                height="auto"
+              />
+            </td>
+            <td>
+              <strong>{{ r.racehorseName }}</strong><br />
+              <span class="small-text">
+                {% if r.horse_stats %}
+                  Runs: {{ r.horse_stats.totalRuns }}, Wins: {{ r.horse_stats.totalWins }}, Places: {{ r.horse_stats.totalPlaces }}<br />
+                  Win%: {{ r.horse_stats.win_pct }}%, Place%: {{ r.horse_stats.place_pct }}%
+                {% else %}
+                  Stats not available for this horse.
+                {% endif %}
+              </span>
+            </td>
+            <td>{{ r.ageYears }}</td>
+            <td>{{ r.jockeyName }}</td>
+            <td>{{ r.trainerName }}</td>
+            <td>{{ r.weightText }}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </body>
