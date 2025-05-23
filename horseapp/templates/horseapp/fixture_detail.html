@@ -9,7 +9,7 @@
       name="keywords"
       content="horse racing, fixture {{ fixture_id }}, races, {{ year }}"
     />
-    <title>Fixture {{ fixture_id }} - {{ year }}</title>
+    <title>{{ course_name }}</title>
     <style>
       body {
         font-family: Arial;
@@ -31,7 +31,7 @@
     </style>
   </head>
   <body>
-    <h1>Races for Fixture #{{ fixture_id }} ({{ year }})</h1>
+    <h1>Races for {{ course_name }}</h1>
     <a href="{% url 'index' %}">← Back to Racecourses</a>
 
     {% if races %}
@@ -50,7 +50,7 @@
         <tr>
           <td>{{ race.raceTime }}</td>
           <td>
-            <a href="{% url 'race_detail' year=year race_id=race.raceId %}">
+            <a href="{% url 'race_detail' year=year race_id=race.raceId race_name=race.raceName %}">
               {{ race.raceName }}
             </a>
           </td>

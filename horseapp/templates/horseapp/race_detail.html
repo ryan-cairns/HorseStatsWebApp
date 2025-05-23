@@ -9,7 +9,7 @@
     content="horse racing, race details, jockeys, trainers, horses"
   />
   <head>
-    <title>Race #{{ race_id }}</title>
+    <title>{{ race_name }}</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -40,7 +40,7 @@
     </style>
   </head>
   <body>
-    <h1>Race #{{ race_id }} – {{ year }}</h1>
+    <h1>{{ race_name }}</h1>
     <a
       href="{% url 'index' %}"
       onclick="event.preventDefault(); history.back();"

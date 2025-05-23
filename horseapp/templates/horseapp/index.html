@@ -48,7 +48,7 @@
         <tr>
           <td>
             <a
-              href="{% url 'racecourse_redirect' course.courseId course.nextFixtureDate %}"
+              href="{% url 'racecourse_redirect' course.courseId course.nextFixtureDate course.name %}"
             >
               {{ course.name }}
             </a>

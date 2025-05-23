@@ -38,7 +38,7 @@ def index(request):
 
     return render(request, "horseapp/index.html", {'races': races})
 
-def fixture_detail(request, year, fixture_id):
+def fixture_detail(request, year, fixture_id, course_name):
     api_url = f'https://api09.horseracing.software/bha/v1/fixtures/{year}/{fixture_id}/races'
     headers = {
         'Accept': 'application/json, text/plain, */*',
@@ -60,7 +60,8 @@ def fixture_detail(request, year, fixture_id):
     return render(request, 'horseapp/fixture_detail.html', {
         'races': races,
         'fixture_id': fixture_id,
-        'year': year
+        'year': year,
+        'course_name': course_name
     })
 
 
@@ -95,17 +96,17 @@ def find_fixture_reverse(course_id, fixture_date_str):
 
     return None
 
-def racecourse_redirect_to_fixture(request, course_id, fixture_date):
+def racecourse_redirect_to_fixture(request, course_id, fixture_date, course_name):
     fixture = find_fixture_reverse(course_id, fixture_date)
     
     if fixture:
         year = fixture["fixtureDate"][:4]
         fixture_id = fixture["fixtureId"]
-        return redirect('fixture_detail', year=year, fixture_id=fixture_id)
+        return redirect('fixture_detail', year=year, fixture_id=fixture_id, course_name=course_name)
     else:
         return HttpResponse("No matching fixture found.", status=404)
     
-def race_detail(request, year, race_id):
+def race_detail(request, year, race_id, race_name):
     url = f"https://api09.horseracing.software/bha/v1/races/{year}/{race_id}/0/entries"
     headers = {
         'Accept': 'application/json',
@@ -123,18 +124,17 @@ def race_detail(request, year, race_id):
 
     for r in runners:
         r["horse_stats"] = get_horse_stats(r["animalId"])
-        print (r["horse_stats"])
         
     return render(request, "horseapp/race_detail.html", {
         "runners": runners,
         "race_id": race_id,
-        "year": year
+        "year": year,
+        "race_name": race_name
     })
 
 def get_horse_stats(animal_id):
     import requests
-    from collections import Counter
-
+    
     headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer 1|LuWZoUL0sMuGBvKboxSGTmYbhiZ9LwSpzBKP8mCQ',
@@ -152,7 +152,5 @@ def get_horse_stats(animal_id):
         runs = data["performanceDetails"]
     except requests.RequestException as e:
         print(f"Error fetching horse {animal_id} performance:", e)
-
-    print(runs)
         
     return runs
