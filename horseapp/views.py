@@ -20,8 +20,7 @@ def index(request):
         response = requests.get(api_url, headers=headers)
         response.raise_for_status()
         data = response.json()
-        
-        # Sort by nextFixtureDate (if it exists and is not None)
+
         sorted_data = sorted(
             data['data'],
             key=lambda x: datetime.datetime.strptime(x['nextFixtureDate'], "%Y-%m-%d") if x['nextFixtureDate'] else datetime.datetime.max
@@ -123,36 +122,28 @@ def race_detail(request, year, race_id, race_name):
         return HttpResponse("Unable to fetch race details.", status=500)
 
     for r in runners:
-        horse_stats_list = get_horse_stats(r["animalId"]) # This returns a list
+        horse_stats_list = get_horse_stats(r["animalId"])
         
-        # Ensure horse_stats_list is not empty and contains a dictionary
         if horse_stats_list and len(horse_stats_list) > 0:
-            horse_stats_data = horse_stats_list[0] # Get the dictionary from the list
+            horse_stats_data = horse_stats_list[0]
             
             total_runs = horse_stats_data.get("totalRuns", 0)
             total_wins = horse_stats_data.get("totalWins", 0)
             total_places = horse_stats_data.get("totalPlaces", 0)
 
-            # Calculate Win Percentage
-            # Handle division by zero for total_runs
             if total_runs > 0:
                 win_pct = (total_wins / total_runs) * 100
                 place_pct = (total_places / total_runs) * 100
             else:
                 win_pct = 0.0
                 place_pct = 0.0
-            
-            # Add these calculated stats directly to the horse_stats_data dictionary
-            # You might want to round them for display purposes
+
             horse_stats_data['win_pct'] = round(win_pct, 2)
             horse_stats_data['place_pct'] = round(place_pct, 2)
 
-            # Re-assign the *modified* dictionary back to r["horse_stats"]
-            # (or you could just add win_pct and place_pct directly to r if preferred)
-            r["horse_stats"] = horse_stats_data # Now r["horse_stats"] is the dictionary itself, not a list
+            r["horse_stats"] = horse_stats_data
         else:
-            # If no stats, ensure horse_stats is set to a default or None
-            r["horse_stats"] = None # Or an empty dictionary {} if you prefer
+            r["horse_stats"] = None
 
     return render(request, "horseapp/race_detail.html", {
         "runners": runners,
