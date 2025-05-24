@@ -2,6 +2,7 @@ from django.http import HttpResponse
 import requests
 import datetime
 from django.shortcuts import redirect, render
+from urllib.parse import unquote
 
 
 def index(request):
@@ -55,6 +56,11 @@ def fixture_detail(request, year, fixture_id, course_name):
         races = data['data']
     except requests.RequestException as e:
         print("Error fetching fixture races:", e)
+
+    for race in races:
+        if "raceName" in race and isinstance(race["raceName"], str):
+            # This is the crucial step: Decode the raceName here!
+            race["raceName"] = unquote(race["raceName"])
 
     return render(request, 'horseapp/fixture_detail.html', {
         'races': races,
